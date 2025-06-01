@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import { Modal } from './components/Modal';
+import { Modal } from './components/Modal/Modal';
 
 import './App.css';
 
@@ -8,6 +8,11 @@ export class App extends Component {
   state = {
     isOpened: false,
     commentCount: 0,
+    formData: {
+      name: '',
+      email: '',
+      comment: '',
+    }
   }
 
   componentDidMount() {
@@ -36,6 +41,33 @@ export class App extends Component {
     }
   }
 
+  handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    this.setState((prevState) => ({
+      formData: {
+        ...prevState.formData,
+        [name]: value
+      }
+    }));
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(`Форма відправлена: ${this.state.formData}`);
+
+    this.setState((prevState) => ({
+      commentCount: prevState.commentCount + 1,
+      isOpened: false,
+      formData: {
+        name: '',
+        email: '',
+        comment: ''
+      }
+    }));
+  }
+
   openModal = () => {
     this.setState({ isOpened: true });
   }
@@ -45,10 +77,12 @@ export class App extends Component {
   }
 
   render() {
+    const { formData } = this.state;
+
     return (
       <div className="App">
         <button type='button' onClick={this.openModal}>Відправити коментар</button>
-        {this.state.isOpened && <Modal onClose={this.closeModal} />}
+        {this.state.isOpened && <Modal onClose={this.closeModal} onSubmit={this.handleSubmit} formData={formData} onChange={this.handleInputChange} />}
       </div>
     );
   }
